@@ -1,0 +1,1 @@
+New-ItemProperty "HKCU:\Software\Sysinternals" -Name "EulaAccepted" -Value 1 -PropertyType "DWORD"
