@@ -2,6 +2,9 @@
 # it will parse the event text to extract the WMI queries using a RegEx expression (tested on English OS)
 # then it will run those queries and measure how long it takes to execute them
 # this should help in troubleshooting high wmi cpu usage
+#
+# line below is an easy way to view the results:
+# $events | Out-GridView
 
 $wmiLogName = 'Microsoft-Windows-WMI-Activity/Trace'
 $rawEvents = Get-WinEvent -FilterHashTable @{logname=$wmiLogName; id=11} -Oldest
