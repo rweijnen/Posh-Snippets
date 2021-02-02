@@ -3,7 +3,7 @@ PowerShell snippets
 
 Just my collection of PowerShell snippets
 
-Added example to call API's in Wow64ApiSet (eg to detect availability of WOW64 layer):
+Added example to call API's in Wow64ApiSet (eg to detect availability of WOW64 layer) [SharpWow64ApiSet](https://github.com/rweijnen/Posh-Snippets/blob/master/PoshWow64ApiSet)
 ```[bool]$MachineIsSupported = $false
 $hr = [WinApi]::IsWow64GuestMachineSupported([WinApi]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
 if ($hr -eq [WinApi]::S_OK)
