@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.ComponentModel;
 
-public static class rweijnen.WOWTester
+public static class WOWTester
 {
     public const ushort IMAGE_FILE_MACHINE_UNKNOWN = 0;
     public const ushort IMAGE_FILE_MACHINE_TARGET_HOST = 0x0001; // Useful for indicating we want to interact with the host and not a WoW guest.
@@ -172,9 +172,9 @@ function Test-OperatingSystemCanRunProcessorArchitecture {
 
     [bool]$boolMachineIsSupported = $false
 
-    $uint16MachineTypeToTest = [rweijnen.WOWTester]::ProcessorArchitectureEnvironmentVariableStrToMachineType($strProcessorArchitectureToTest)
-    $uint32ResultCode = [rweijnen.WOWTester]::IsWow64GuestMachineSupported($uint16MachineTypeToTest, [ref]$boolMachineIsSupported)
-    if ($uint32ResultCode -eq [rweijnen.WOWTester]::S_OK) {
+    $uint16MachineTypeToTest = [WOWTester]::ProcessorArchitectureEnvironmentVariableStrToMachineType($strProcessorArchitectureToTest)
+    $uint32ResultCode = [WOWTester]::IsWow64GuestMachineSupported($uint16MachineTypeToTest, [ref]$boolMachineIsSupported)
+    if ($uint32ResultCode -eq [WOWTester]::S_OK) {
         if ($boolMachineIsSupported) {
             # Return $true
             $true
@@ -186,13 +186,13 @@ function Test-OperatingSystemCanRunProcessorArchitecture {
         # Check native
         [UInt16]$uint16WOWProcessMachineType = 0
         [UInt16]$uint16OperatingSystemMachineType = 0
-        $boolResult = [rweijnen.WOWTester]::IsWow64Process2([rweijnen.WOWTester]::GetCurrentProcess(), [ref]$uint16WOWProcessMachineType, [ref]$uint16OperatingSystemMachineType);
+        $boolResult = [WOWTester]::IsWow64Process2([WOWTester]::GetCurrentProcess(), [ref]$uint16WOWProcessMachineType, [ref]$uint16OperatingSystemMachineType);
         if ($boolResult) {
             # Get the OS processor architecture. Note that there are more PowerShell-y ways to
             # do this, namely reading the following registry value:
             # Registry key: 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
             # Registry string value: 'PROCESSOR_ARCHITECTURE'
-            $strOperatingSystemProcessorArchitecture = [rweijnen.WOWTester]::MachineTypeToProcessorArchitectureEnvironmentVariableStr($uint16OperatingSystemMachineType)
+            $strOperatingSystemProcessorArchitecture = [WOWTester]::MachineTypeToProcessorArchitectureEnvironmentVariableStr($uint16OperatingSystemMachineType)
             if ($strProcessorArchitectureToTest -eq $strOperatingSystemProcessorArchitecture) {
                 $boolMachineIsSupported = $true
                 # Return $true
@@ -215,15 +215,15 @@ Test-OperatingSystemCanRunProcessorArchitecture 'ARM'
 Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
 
 [bool]$MachineIsSupported = $false
-$hr = [rweijnen.WOWTester]::IsWow64GuestMachineSupported([rweijnen.WOWTester]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
-if ($hr -eq [rweijnen.WOWTester]::S_OK) {
+$hr = [WOWTester]::IsWow64GuestMachineSupported([WOWTester]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
+if ($hr -eq [WOWTester]::S_OK) {
     "IsWow64GuestMachineSupported IMAGE_FILE_MACHINE_I386: $MachineIsSupported"
 }
 
 [UInt16]$processMachine = 0;
 [UInt16]$nativeMachine = 0;
-$bResult = [rweijnen.WOWTester]::IsWow64Process2([rweijnen.WOWTester]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
+$bResult = [WOWTester]::IsWow64Process2([WOWTester]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
 if ($bResult) {
-    "ProcessMachine: $([rweijnen.WOWTester]::MachineTypeToStr($processMachine))"
-    "NativeMachine: $([rweijnen.WOWTester]::MachineTypeToStr($nativeMachine))"
+    "ProcessMachine: $([WOWTester]::MachineTypeToStr($processMachine))"
+    "NativeMachine: $([WOWTester]::MachineTypeToStr($nativeMachine))"
 }
