@@ -129,7 +129,7 @@ Add-Type $source
 $hr = [rweijnen.WOWTester]::IsWow64GuestMachineSupported([rweijnen.WOWTester]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
 if ($hr -eq [rweijnen.WOWTester]::S_OK)
 {
-	"IsWow64GuestMachineSupported IMAGE_FILE_MACHINE_I386: $MachineIsSupported"
+    "IsWow64GuestMachineSupported IMAGE_FILE_MACHINE_I386: $MachineIsSupported"
 }
 
 [UInt16]$processMachine = 0;
@@ -137,6 +137,6 @@ if ($hr -eq [rweijnen.WOWTester]::S_OK)
 $bResult = [rweijnen.WOWTester]::IsWow64Process2([rweijnen.WOWTester]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
 if ($bResult)
 {
-	"ProcessMachine: $([rweijnen.WOWTester]::MachineTypeToStr($processMachine))"
-	"NativeMachine: $([rweijnen.WOWTester]::MachineTypeToStr($nativeMachine))"
+    "ProcessMachine: $([rweijnen.WOWTester]::MachineTypeToStr($processMachine))"
+    "NativeMachine: $([rweijnen.WOWTester]::MachineTypeToStr($nativeMachine))"
 }
