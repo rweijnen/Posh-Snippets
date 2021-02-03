@@ -120,6 +120,44 @@ public static class rweijnen.WOWTester
                 return "Unknown Machine Type";
         }
     }
+
+    public static string MachineTypeToProcessorArchitectureEnvironmentVariableStr(ushort MachineType)
+    {
+        switch (MachineType)
+        {
+            case IMAGE_FILE_MACHINE_I386:
+                return "x86";
+            case IMAGE_FILE_MACHINE_ARMNT:
+                return "ARM";
+            case IMAGE_FILE_MACHINE_IA64:
+                return "IA64";
+            case IMAGE_FILE_MACHINE_AMD64:
+                return "AMD64";
+            case IMAGE_FILE_MACHINE_ARM64:
+                return "ARM64";
+            default:
+                return "";
+        }
+    }
+
+    public static ushort ProcessorArchitectureEnvironmentVariableStrToMachineType(string ProcessorArchitectureEnvironmentVariable)
+    {
+        switch (ProcessorArchitectureEnvironmentVariable)
+        {
+            case "x86":
+                return IMAGE_FILE_MACHINE_I386;
+            case "ARM":
+                return IMAGE_FILE_MACHINE_ARMNT;
+            case "IA64":
+                return IMAGE_FILE_MACHINE_IA64;
+            case "AMD64":
+                return IMAGE_FILE_MACHINE_AMD64;
+            case "ARM64":
+                return IMAGE_FILE_MACHINE_ARM64;
+            default:
+                return "";
+        }
+    }
 }
 "@
 
