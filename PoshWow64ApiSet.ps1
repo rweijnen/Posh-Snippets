@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.ComponentModel;
 
-public static class WinApi
+public static class WOWTester
 {
     public const ushort IMAGE_FILE_MACHINE_UNKNOWN = 0;
     public const ushort IMAGE_FILE_MACHINE_TARGET_HOST = 0x0001; // Useful for indicating we want to interact with the host and not a WoW guest.
@@ -21,7 +21,7 @@ public static class WinApi
     public const ushort IMAGE_FILE_MACHINE_SH5 = 0x01a8; // SH5
     public const ushort IMAGE_FILE_MACHINE_ARM = 0x01c0; // ARM Little-Endian
     public const ushort IMAGE_FILE_MACHINE_THUMB = 0x01c2; // ARM Thumb/Thumb-2 Little-Endian
-    public const ushort IMAGE_FILE_MACHINE_ARMNT = 0x01c4; // ARM Thumb-2 Little-Endian
+    public const ushort IMAGE_FILE_MACHINE_ARMNT = 0x01c4; // ARM Thumb-2 Little-Endian, this is the Machine Type observed on Windows RT (Windows 8/8.1 for ARM)
     public const ushort IMAGE_FILE_MACHINE_AM33 = 0x01d3;
     public const ushort IMAGE_FILE_MACHINE_POWERPC = 0x01F0; // IBM PowerPC Little-Endian
     public const ushort IMAGE_FILE_MACHINE_POWERPCFP = 0x01f1;
@@ -120,23 +120,96 @@ public static class WinApi
                 return "Unknown Machine Type";
         }
     }
+
+    public static string MachineTypeToProcessorArchitectureEnvironmentVariableStr(ushort MachineType)
+    {
+        switch (MachineType)
+        {
+            case IMAGE_FILE_MACHINE_I386:
+                return "x86";
+            case IMAGE_FILE_MACHINE_ARMNT:
+                return "ARM";
+            case IMAGE_FILE_MACHINE_IA64:
+                return "IA64";
+            case IMAGE_FILE_MACHINE_AMD64:
+                return "AMD64";
+            case IMAGE_FILE_MACHINE_ARM64:
+                return "ARM64";
+            default:
+                return "";
+        }
+    }
+
+    public static ushort ProcessorArchitectureEnvironmentVariableStrToMachineType(string ProcessorArchitectureEnvironmentVariable)
+    {
+        switch (ProcessorArchitectureEnvironmentVariable)
+        {
+            case "x86":
+                return IMAGE_FILE_MACHINE_I386;
+            case "ARM":
+                return IMAGE_FILE_MACHINE_ARMNT;
+            case "IA64":
+                return IMAGE_FILE_MACHINE_IA64;
+            case "AMD64":
+                return IMAGE_FILE_MACHINE_AMD64;
+            case "ARM64":
+                return IMAGE_FILE_MACHINE_ARM64;
+            default:
+                return IMAGE_FILE_MACHINE_UNKNOWN;
+        }
+    }
 }
 "@
 
 Add-Type $source
 
-[bool]$MachineIsSupported = $false
-$hr = [WinApi]::IsWow64GuestMachineSupported([WinApi]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
-if ($hr -eq [WinApi]::S_OK)
-{
-	"IsWow64GuestMachineSupported IMAGE_FILE_MACHINE_I386: $MachineIsSupported"
-}
+function Test-OperatingSystemCanRunProcessorArchitecture {
+    # Example usage:
+    # Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
+    #
+    # Supported processor architectures are:
+    #  - 'x86' (i.e., Intel IA-32 or compatible)
+    #  - 'AMD64' (including Intel x86-x64)
+    #  - 'IA64' (i.e., Itanium)
+    #  - 'ARM' (i.e., 32-bit ARM)
+    #  - 'ARM64' (i.e., 64-bit ARM)
 
-[UInt16]$processMachine = 0;
-[UInt16]$nativeMachine = 0;
-$bResult = [WinApi]::IsWow64Process2([WinApi]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
-if ($bResult)
-{
-	"ProcessMachine: $([WinApi]::MachineTypeToStr($processMachine))"
-	"NativeMachine: $([WinApi]::MachineTypeToStr($nativeMachine))"
+    # Could convert this to params() if desired
+    $strProcessorArchitectureToTest = $args[0]
+
+    [bool]$boolMachineIsSupported = $false
+
+    $uint16MachineTypeToTest = [WOWTester]::ProcessorArchitectureEnvironmentVariableStrToMachineType($strProcessorArchitectureToTest)
+    $uint32ResultCode = [WOWTester]::IsWow64GuestMachineSupported($uint16MachineTypeToTest, [ref]$boolMachineIsSupported)
+    if ($uint32ResultCode -eq [WOWTester]::S_OK) {
+        if ($boolMachineIsSupported) {
+            # Return $true
+            $true
+        }
+    }
+
+    if ($boolMachineIsSupported -ne $true) {
+        # The processor architecture is not supported under WOW.
+        # Check native
+        [UInt16]$uint16WOWProcessMachineType = 0
+        [UInt16]$uint16OperatingSystemMachineType = 0
+        $boolResult = [WOWTester]::IsWow64Process2([WOWTester]::GetCurrentProcess(), [ref]$uint16WOWProcessMachineType, [ref]$uint16OperatingSystemMachineType);
+        if ($boolResult) {
+            # Get the OS processor architecture. Note that there are more PowerShell-y ways to
+            # do this, namely reading the following registry value:
+            # Registry key: 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+            # Registry string value: 'PROCESSOR_ARCHITECTURE'
+            $strOperatingSystemProcessorArchitecture = [WOWTester]::MachineTypeToProcessorArchitectureEnvironmentVariableStr($uint16OperatingSystemMachineType)
+            if ($strProcessorArchitectureToTest -eq $strOperatingSystemProcessorArchitecture) {
+                $boolMachineIsSupported = $true
+                # Return $true
+                $true
+            }
+        }
+    }
+
+    if ($boolMachineIsSupported -ne $true) {
+        # Still here? Return $false
+        $false
+    }
 }
