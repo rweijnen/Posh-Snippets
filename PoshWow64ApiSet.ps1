@@ -155,7 +155,7 @@ public static class WOWTester
             case "ARM64":
                 return IMAGE_FILE_MACHINE_ARM64;
             default:
-                return "";
+                return IMAGE_FILE_MACHINE_UNKNOWN;
         }
     }
 }
@@ -165,7 +165,14 @@ Add-Type $source
 
 function Test-OperatingSystemCanRunProcessorArchitecture {
     # Example usage:
-    # $boolProcessorArchitectureSupported = Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
+    # Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
+    #
+    # Supported processor architectures are:
+    #  - 'x86' (i.e., Intel IA-32 or compatible)
+    #  - 'AMD64' (including Intel x86-x64)
+    #  - 'IA64' (i.e., Itanium)
+    #  - 'ARM' (i.e., 32-bit ARM)
+    #  - 'ARM64' (i.e., 64-bit ARM)
 
     # Could convert this to params() if desired
     $strProcessorArchitectureToTest = $args[0]
@@ -205,25 +212,4 @@ function Test-OperatingSystemCanRunProcessorArchitecture {
         # Still here? Return $false
         $false
     }
-}
-
-# Temporary test code:
-Test-OperatingSystemCanRunProcessorArchitecture 'x86'
-Test-OperatingSystemCanRunProcessorArchitecture 'AMD64'
-Test-OperatingSystemCanRunProcessorArchitecture 'IA64'
-Test-OperatingSystemCanRunProcessorArchitecture 'ARM'
-Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
-
-[bool]$MachineIsSupported = $false
-$hr = [WOWTester]::IsWow64GuestMachineSupported([WOWTester]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
-if ($hr -eq [WOWTester]::S_OK) {
-    "IsWow64GuestMachineSupported IMAGE_FILE_MACHINE_I386: $MachineIsSupported"
-}
-
-[UInt16]$processMachine = 0;
-[UInt16]$nativeMachine = 0;
-$bResult = [WOWTester]::IsWow64Process2([WOWTester]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
-if ($bResult) {
-    "ProcessMachine: $([WOWTester]::MachineTypeToStr($processMachine))"
-    "NativeMachine: $([WOWTester]::MachineTypeToStr($nativeMachine))"
 }
