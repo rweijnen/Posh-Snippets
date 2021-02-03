@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.ComponentModel;
 
-public static class WinApi
+public static class rweijnen.WOWTester
 {
     public const ushort IMAGE_FILE_MACHINE_UNKNOWN = 0;
     public const ushort IMAGE_FILE_MACHINE_TARGET_HOST = 0x0001; // Useful for indicating we want to interact with the host and not a WoW guest.
@@ -126,17 +126,17 @@ public static class WinApi
 Add-Type $source
 
 [bool]$MachineIsSupported = $false
-$hr = [WinApi]::IsWow64GuestMachineSupported([WinApi]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
-if ($hr -eq [WinApi]::S_OK)
+$hr = [rweijnen.WOWTester]::IsWow64GuestMachineSupported([rweijnen.WOWTester]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
+if ($hr -eq [rweijnen.WOWTester]::S_OK)
 {
 	"IsWow64GuestMachineSupported IMAGE_FILE_MACHINE_I386: $MachineIsSupported"
 }
 
 [UInt16]$processMachine = 0;
 [UInt16]$nativeMachine = 0;
-$bResult = [WinApi]::IsWow64Process2([WinApi]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
+$bResult = [rweijnen.WOWTester]::IsWow64Process2([rweijnen.WOWTester]::GetCurrentProcess(), [ref]$processMachine, [ref]$nativeMachine);
 if ($bResult)
 {
-	"ProcessMachine: $([WinApi]::MachineTypeToStr($processMachine))"
-	"NativeMachine: $([WinApi]::MachineTypeToStr($nativeMachine))"
+	"ProcessMachine: $([rweijnen.WOWTester]::MachineTypeToStr($processMachine))"
+	"NativeMachine: $([rweijnen.WOWTester]::MachineTypeToStr($nativeMachine))"
 }
