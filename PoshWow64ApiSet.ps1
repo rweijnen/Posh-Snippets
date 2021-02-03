@@ -21,7 +21,7 @@ public static class WinApi
     public const ushort IMAGE_FILE_MACHINE_SH5 = 0x01a8; // SH5
     public const ushort IMAGE_FILE_MACHINE_ARM = 0x01c0; // ARM Little-Endian
     public const ushort IMAGE_FILE_MACHINE_THUMB = 0x01c2; // ARM Thumb/Thumb-2 Little-Endian
-    public const ushort IMAGE_FILE_MACHINE_ARMNT = 0x01c4; // ARM Thumb-2 Little-Endian
+    public const ushort IMAGE_FILE_MACHINE_ARMNT = 0x01c4; // ARM Thumb-2 Little-Endian, this is the Machine Type observed on Windows RT (Windows 8/8.1 for ARM)
     public const ushort IMAGE_FILE_MACHINE_AM33 = 0x01d3;
     public const ushort IMAGE_FILE_MACHINE_POWERPC = 0x01F0; // IBM PowerPC Little-Endian
     public const ushort IMAGE_FILE_MACHINE_POWERPCFP = 0x01f1;
