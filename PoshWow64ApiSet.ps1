@@ -163,6 +163,57 @@ public static class rweijnen.WOWTester
 
 Add-Type $source
 
+function Test-OperatingSystemCanRunProcessorArchitecture {
+    # Example usage:
+    # $boolProcessorArchitectureSupported = Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
+
+    # Could convert this to params() if desired
+    $strProcessorArchitectureToTest = $args[0]
+
+    [bool]$boolMachineIsSupported = $false
+
+    $uint16MachineTypeToTest = [rweijnen.WOWTester]::ProcessorArchitectureEnvironmentVariableStrToMachineType($strProcessorArchitectureToTest)
+    $uint32ResultCode = [rweijnen.WOWTester]::IsWow64GuestMachineSupported($uint16MachineTypeToTest, [ref]$boolMachineIsSupported)
+    if ($uint32ResultCode -eq [rweijnen.WOWTester]::S_OK) {
+        if ($boolMachineIsSupported) {
+            # Return $true
+            $true
+        }
+    }
+
+    if ($boolMachineIsSupported -ne $true) {
+        # The processor architecture is not supported under WOW.
+        # Check native
+        [UInt16]$uint16WOWProcessMachineType = 0
+        [UInt16]$uint16OperatingSystemMachineType = 0
+        $boolResult = [rweijnen.WOWTester]::IsWow64Process2([rweijnen.WOWTester]::GetCurrentProcess(), [ref]$uint16WOWProcessMachineType, [ref]$uint16OperatingSystemMachineType);
+        if ($boolResult) {
+            # Get the OS processor architecture. Note that there are more PowerShell-y ways to
+            # do this, namely reading the following registry value:
+            # Registry key: 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+            # Registry string value: 'PROCESSOR_ARCHITECTURE'
+            $strOperatingSystemProcessorArchitecture = [rweijnen.WOWTester]::MachineTypeToProcessorArchitectureEnvironmentVariableStr($uint16OperatingSystemMachineType)
+            if ($strProcessorArchitectureToTest -eq $strOperatingSystemProcessorArchitecture) {
+                $boolMachineIsSupported = $true
+                # Return $true
+                $true
+            }
+        }
+    }
+
+    if ($boolMachineIsSupported -ne $true) {
+        # Still here? Return $false
+        $false
+    }
+}
+
+# Temporary test code:
+Test-OperatingSystemCanRunProcessorArchitecture 'x86'
+Test-OperatingSystemCanRunProcessorArchitecture 'AMD64'
+Test-OperatingSystemCanRunProcessorArchitecture 'IA64'
+Test-OperatingSystemCanRunProcessorArchitecture 'ARM'
+Test-OperatingSystemCanRunProcessorArchitecture 'ARM64'
+
 [bool]$MachineIsSupported = $false
 $hr = [rweijnen.WOWTester]::IsWow64GuestMachineSupported([rweijnen.WOWTester]::IMAGE_FILE_MACHINE_I386, [ref]$MachineIsSupported)
 if ($hr -eq [rweijnen.WOWTester]::S_OK) {
