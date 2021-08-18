@@ -1,4 +1,4 @@
-cls
+# slighly improved from code found here: https://blog.openthreatresearch.com/ntobjectmanager_rpc_smb_scm
 $IsElevated = [Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544'
 if (-not ($IsElevated))
 {
