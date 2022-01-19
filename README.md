@@ -3,6 +3,8 @@ PowerShell snippets
 
 Just my collection of PowerShell snippets
 
+Added simple script to extract assemblies that are weaved using Costura.Fody
+
 Added a simple script to download and install the Windows 10 Debuggers and set the `_NT_SYMBOL_PATH` Environment Variable
 https://github.com/rweijnen/Posh-Snippets/blob/master/Get-WinDBG.ps1
 
