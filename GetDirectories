@@ -1,0 +1,72 @@
+function Get-Directories
+{
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory = $true,
+				   ValueFromPipeline = $true,
+				   Position = 0)]
+		[System.IO.FileInfo]$Path,
+		[Parameter(Position = 1)]
+		[String]$SearchPattern = '*.*'
+	)
+	
+	Begin
+	{
+		# an arraylist to hold the results
+		$result = New-Object -TypeName System.Collections.ArrayList
+		
+		# a stack object to push directories that needs to be processed
+		$pending = New-Object System.Collections.Generic.Stack[String]
+		
+	}
+	Process
+	{
+		# push all provided paths to the stack
+		foreach ($entry in $Path)
+		{
+			$pending.Push($entry)
+		}
+		
+		# loop through the stack
+		while ($pending.Count -ne 0)
+		{
+			# current item to process
+			$current = $pending.Pop()
+			try
+			{
+				# get all subdirectories from the current one
+				# handle in try..catch e.g. to catch Access Denied
+				$next = [IO.Directory]::GetDirectories($current, $SearchPattern)
+				if ($null -ne $next)
+				{
+					ForEach ($dir in $next)
+					{
+						# add directory to the result list
+						[void]$result.Add($dir)
+					}
+				}
+			}
+			# ignore exceptions
+			catch { }
+			
+			try
+			{
+				# we need to call GetDirectories for all directories that we found
+				$next = [IO.Directory]::GetDirectories($current, $SearchPattern)
+				ForEach ($dir in $next)
+				{
+					# push subdir to stack
+					$pending.Push($dir)
+				}
+			}
+			# ignore exceptions
+			catch { }
+		}
+		
+	}
+	End
+	{
+		return $result	
+	}
+}
