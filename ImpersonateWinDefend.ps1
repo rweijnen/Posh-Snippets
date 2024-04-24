@@ -85,7 +85,6 @@ $tokenParams = @{
         'S-1-5-11',
         'S-1-5-15',
         'S-1-5-32-545',
-	'S-1-16-16384',
         $(Get-NtSid -ServiceName "TrustedInstaller"),
         $(Get-NtSid -ServiceName "WinDefend"),
         $(Get-NtSid -ServiceName "Sense")
@@ -95,13 +94,17 @@ $tokenParams = @{
 # Create a new NT token with the specified parameters
 $token = New-NtToken @tokenParams
 
-#$token = New-NtToken -User SY -TokenType Primary -Access MaximumAllowed -Privileges SeCreateGlobalPrivilege,SeTrustedCredManAccessPrivilege,SeTakeOwnershipPrivilege,SeLoadDriverPrivilege,SeSecurityPrivilege,SeIncreaseQuotaPrivilege,SeAssignPrimaryTokenPrivilege,SeDebugPrivilege,SeImpersonatePrivilege,SeCreateTokenPrivilege,SeTcbPrivilege -Groups $trustedInstallerSid.ToString(),$winDefendSid.ToString(), BA, WD, S-1-5-32-545,S-1-5-6,S-1-5-15,S-1-5-11,S-1-5-80-1523878533-411328482-2798077809-3098663872-2604013308,S-1-5-5-0-410203
 $dupToken = Copy-NtToken -Token $token -ImpersonationLevel Impersonation -Access MaximumAllowed
 
-New-Win32Process -CommandLine "cmd.exe /k echo **WINDOWS DEFENDER COMMAND PROMPT** && whoami /groups" -Token $dupToken
+New-Win32Process -CommandLine "cmd.exe /k echo **WINDOWS DEFENDER COMMAND PROMPT** && whoami /all" -Token $dupToken
+
+$dupToken.Dispose()
+$token.Dispose()
 
 #revert
 $contextLsas.Revert()
 $contextLsas.Dispose()
 $contextWinLogon.Revert()
 $contextWinLogon.Dispose()
+
+$current.Dispose()
