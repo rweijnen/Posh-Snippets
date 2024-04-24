@@ -36,9 +36,7 @@ ForEach ($priv in $disabledPrivileges)
 }
 
 $token = New-NtToken -User SY -TokenType Primary -Access MaximumAllowed -Privileges SeCreateGlobalPrivilege,SeTrustedCredManAccessPrivilege,SeTakeOwnershipPrivilege,SeLoadDriverPrivilege,SeSecurityPrivilege,SeIncreaseQuotaPrivilege,SeAssignPrimaryTokenPrivilege,SeDebugPrivilege,SeImpersonatePrivilege,SeCreateTokenPrivilege,SeTcbPrivilege -Groups $trustedInstallerSid.ToString(),$winDefendSid.ToString(), BA, WD, S-1-5-32-545,S-1-5-6,S-1-5-15,S-1-5-11,S-1-5-80-1523878533-411328482-2798077809-3098663872-2604013308
-Set-NtTokenGroup -Token $token -Sid S-1-5-32-544 -Attributes Enabled,Owner
 $dupToken = Copy-NtToken -Token $token -ImpersonationLevel Impersonation -Access MaximumAllowed
-Set-NtTokenGroup -Token $dupToken -Sid S-1-5-32-544 -Attributes Enabled,Owner
 
 New-Win32Process -CommandLine "cmd.exe /k echo **WINDOWS DEFENDER COMMAND PROMPT** && whoami /groups" -Token $dupToken
 
