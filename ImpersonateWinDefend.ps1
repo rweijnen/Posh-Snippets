@@ -57,7 +57,7 @@ $tokenParams = @{
         'S-1-5-11',
         'S-1-5-15',
         'S-1-5-32-545',
-		'S-1-16-16384',
+	'S-1-16-16384',
         $(Get-NtSid -ServiceName "TrustedInstaller"),
         $(Get-NtSid -ServiceName "WinDefend"),
         $(Get-NtSid -ServiceName "Sense")
