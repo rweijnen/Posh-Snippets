@@ -31,6 +31,7 @@ ForEach ($priv in $disabledPrivileges)
 	Enable-NtTokenPrivilege -Privilege $priv
 }
 
+# enable all privileges, just because we can and might be useful for future purposes
 $tokenParams = @{
     User = 'SY'  # SYSTEM
     TokenType = 'Primary'
