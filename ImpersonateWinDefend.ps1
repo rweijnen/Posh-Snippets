@@ -40,19 +40,44 @@ $tokenParams = @{
     User = 'SY'
     TokenType = 'Primary'
     Access = 'MaximumAllowed'
+	IntegrityLevel = 'System'
     Privileges = @(
-        'SeAssignPrimaryTokenPrivilege',
-        'SeCreateGlobalPrivilege',
         'SeCreateTokenPrivilege',
-        'SeDebugPrivilege',
-        'SeImpersonatePrivilege',
+        'SeAssignPrimaryTokenPrivilege',
+        'SeLockMemoryPrivilege',
         'SeIncreaseQuotaPrivilege',
-        'SeLoadDriverPrivilege',
+        'SeMachineAccountPrivilege',
+        'SeTcbPrivilege',
         'SeSecurityPrivilege',
         'SeTakeOwnershipPrivilege',
-        'SeTcbPrivilege',
-        'SeTrustedCredManAccessPrivilege'
-    ) -join ','
+        'SeLoadDriverPrivilege',
+        'SeSystemProfilePrivilege',
+        'SeSystemTimePrivilege',
+        'SeProfileSingleProcessPrivilege',
+        'SeIncreaseBasePriorityPrivilege',
+        'SeCreatePageFilePrivilege',
+        'SeCreatePermanentPrivilege',
+        'SeBackupPrivilege',
+        'SeRestorePrivilege',
+        'SeShutdownPrivilege',
+        'SeDebugPrivilege',
+        'SeAuditPrivilege',
+        'SeSystemEnvironmentPrivilege',
+        'SeChangeNotifyPrivilege',
+        'SeRemoteShutdownPrivilege',
+        'SeUndockPrivilege',
+        'SeSyncAgentPrivilege',
+        'SeEnableDelegationPrivilege',
+        'SeManageVolumePrivilege',
+        'SeImpersonatePrivilege',
+        'SeCreateGlobalPrivilege',
+        'SeTrustedCredmanAccessPrivilege',
+        'SeRelabelPrivilege',
+        'SeIncreaseWorkingSetPrivilege',
+        'SeTimeZonePrivilege',
+        'SeCreateSymbolicLinkPrivilege',
+        'SeDelegateSessionUserImpersonatePrivilege'
+		)
     Groups = @(
         'BA',
         'WD',
