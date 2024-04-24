@@ -41,5 +41,8 @@ $dupToken = Copy-NtToken -Token $token -ImpersonationLevel Impersonation -Access
 New-Win32Process -CommandLine "cmd.exe /k echo **WINDOWS DEFENDER COMMAND PROMPT** && whoami /groups" -Token $dupToken
 
 #revert
+$contextLsas.Revert()
 $contextLsas.Dispose()
+$contextWinLogon.Revert()
 $contextWinLogon.Dispose()
+
