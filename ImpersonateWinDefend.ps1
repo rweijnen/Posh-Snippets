@@ -1,3 +1,6 @@
+# uses NtObjectManager module
+# quick example code to craft a token containging WinDefend, TrustedInstaller and Sense token...
+# https://github.com/rweijnen/Posh-Snippets/blob/master/ImpersonateWinDefend.ps1
 $winDefendSid = Get-NtSid -ServiceName "WinDefend"
 $trustedInstallerSid = Get-NtSid -ServiceName "TrustedInstaller"
 $senseSid = Get-NtSid -ServiceName "SenseSid"
