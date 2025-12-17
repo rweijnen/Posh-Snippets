@@ -3,6 +3,8 @@ PowerShell snippets
 
 Just my collection of PowerShell snippets
 
+Added [Add-ShiftEnterBinding.ps1](https://github.com/rweijnen/Posh-Snippets/blob/master/Add-ShiftEnterBinding.ps1) to configure Shift+Enter as a newline in Windows Terminal. This is useful when using [Claude Code](https://docs.anthropic.com/en/docs/claude-code) in the terminal, as Enter submits the prompt. With this keybinding, you can use Shift+Enter to insert line breaks in your prompts.
+
 Added simple script to extract assemblies that are weaved using Costura.Fody
 
 Added a simple script to download and install the Windows 10 Debuggers and set the `_NT_SYMBOL_PATH` Environment Variable
